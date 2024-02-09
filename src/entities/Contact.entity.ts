@@ -1,5 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./User.entity";
+import { ContactEmails } from "./ContactEmails.entity";
+import { ContactPhones } from "./ContactPhones.entity";
 
 @Entity("contacts")
 export class Contact {
@@ -9,11 +11,8 @@ export class Contact {
     @Column({length: 120})
     name: string
 
-    @Column({array: true, length: 120})
-    email: string[]
-
-    @Column({array: true, length: 16})
-    phone: string[]
+    @Column({type: "text"})
+    description: string
 
     @CreateDateColumn({type: "date"})
     createdAt: string
@@ -22,5 +21,12 @@ export class Contact {
     updatedAt: string
 
     @ManyToOne(()=> User, (user) => user.contacts)
+    @JoinColumn()
     user: User
+
+    @OneToMany(() => ContactEmails, (contactEmails) => contactEmails.contact)
+    contactEmails: ContactEmails[]
+
+    @OneToMany(() => ContactPhones, (contactPhones) => contactPhones.contact)
+    contactPhones: ContactPhones[]
 };

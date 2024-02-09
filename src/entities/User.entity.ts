@@ -1,6 +1,8 @@
 import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Contact } from "./Contact.entity";
 import { getRounds, hashSync } from "bcryptjs";
+import { UserEmails } from "./UserEmails.entity";
+import { UserPhones } from "./UserPhones.entity";
 
 @Entity("users")
 export class User {
@@ -10,21 +12,23 @@ export class User {
     @Column({length: 120})
     name: string
 
-    @Column({array: true, length: 120, unique: true})
-    email: string[]
-
     @Column({length: 256})
     password: string
 
-    @Column({array: true, length: 16})
-    phone: string[]
+    @Column({default: false})
+    admin: boolean
 
     @CreateDateColumn({type: "date"})
     createdAt: string
 
     @OneToMany(() => Contact, (contact) => contact.user)
-    @JoinColumn()
-    contacts: Contact[];
+    contacts: Contact[]
+
+    @OneToMany(() => UserEmails, (userEmails) => userEmails.user)
+    userEmails: UserEmails[]
+
+    @OneToMany(() => UserPhones, (userPhones) => userPhones.user)
+    userPhones: UserPhones[]
 
     @BeforeInsert()
     @BeforeUpdate()
