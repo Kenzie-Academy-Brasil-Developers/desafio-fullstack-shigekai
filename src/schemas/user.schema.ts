@@ -35,6 +35,7 @@ export const retrieveUserSchema = z.object({
     userEmails: z.array(z.object({
         id: z.string(),
         email: z.string().email(),
+        main: z.boolean(),
         updatedAt: z.string()
     })),
     userPhones: z.array(z.object({

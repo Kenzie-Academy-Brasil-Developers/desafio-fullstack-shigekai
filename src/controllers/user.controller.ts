@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IReadAllUsers, ISafeReturnUser } from "../interfaces/user.interface";
-import { createUserService, deleteUserService, loginUserService, readAllUsersService, retrieveUserService, updateUserService } from "../services/user.service";
+import { createUserService, deleteUserEmailService, deleteUserPhoneService, deleteUserService, loginUserService, newUserEmailService, newUserPhoneService, readAllUsersService, retrieveUserService, updateUserService } from "../services/user.service";
 import { User } from "../entities/User.entity";
 
 export const createUserController = async (
@@ -56,6 +56,50 @@ export const deleteUserController = async (
 ) => {
 
     await deleteUserService(res.locals.entity);
+
+    return res.status(204).json();
+};
+
+export const newUserEmailController = async (
+    req: Request,
+    res: Response
+) => {
+
+    const newUserEmail = await newUserEmailService(
+        req.body,
+        res.locals.entity
+    );
+
+    return res.status(201).json(newUserEmail)
+};
+
+export const deleteUserEmailController = async (
+    req: Request,
+    res: Response
+) => {
+    await deleteUserEmailService(res.locals.entity);
+
+    return res.status(204).json();
+};
+
+export const newUserPhoneController = async (
+    req: Request,
+    res: Response
+) => {
+
+    const newUserPhone = await newUserPhoneService(
+        req.body,
+        res.locals.entity
+    );
+
+    return res.status(201).json(newUserPhone)
+};
+
+export const deleteUserPhoneController = async (
+    req: Request,
+    res: Response
+) => {
+    await deleteUserPhoneService(res.locals.entity);
 
     return res.status(204).json();
 };

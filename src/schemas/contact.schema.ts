@@ -23,6 +23,14 @@ export const returnContactSchema = contactSchema.omit({
     userId: true
 });
 
+export const returnUpdatedContactSchema = contactSchema.pick({
+    id: true,
+    name: true,
+    description: true,
+    createdAt: true,
+    updatedAt: true
+});
+
 export const readContactsByUserSchema = z.object({
     id: z.string().uuid(),
     name: z.string().max(120),
@@ -33,8 +41,6 @@ export const readContactsByUserSchema = z.object({
         name: z.string(),
     }))
 })
-
-export const updateContactByIdSchema = createContactSchema.partial();
 
 export const retrieveContactSchema = z.object({
     id: z.string().uuid(),
@@ -53,3 +59,8 @@ export const retrieveContactSchema = z.object({
         updatedAt: z.string()
     }))
 })
+
+export const updateContactByIdSchema = retrieveContactSchema.pick({
+    name: true,
+    description: true,
+}).partial()

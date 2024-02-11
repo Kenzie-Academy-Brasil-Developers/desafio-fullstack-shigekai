@@ -11,6 +11,9 @@ export class UserEmails{
     @Column({length: 256, unique: true})
     email: string
 
+    @Column({default: false})
+    main: boolean
+
     @UpdateDateColumn({type: "date"})
     updatedAt: string
 

@@ -2,10 +2,14 @@ import "dotenv/config"
 import { compare } from "bcryptjs";
 import { User } from "../entities/User.entity";
 import { AppError } from "../errors/AppError.error";
-import { ICreateUser, ILoginUser, IReadAllUsers, IUpdateUser } from "../interfaces/user.interface";
+import { ICreateUser, ILoginUser, INewUserEmail, INewUserPhone, IReadAllUsers, IUpdateUser } from "../interfaces/user.interface";
 import { userEmailsRepository, userPhonesRepository, userRepository } from "../repositories";
 import { readAllUsersSchema, retrieveUserSchema, safeReturnUpdateUserSchema, safeReturnUserSchema } from "../schemas/user.schema";
 import { sign } from "jsonwebtoken";
+import { UserEmails } from "../entities/UserEmails.entity";
+import { returnNewUserEmailSchema } from "../schemas/userEmails.schema";
+import { returnNewUserPhoneSchema } from "../schemas/userPhones.schema";
+import { UserPhones } from "../entities/UserPhones.entity";
 
 export const createUserService = async (data: ICreateUser) => {
     const {email, phone, ...user} = data;
@@ -14,6 +18,7 @@ export const createUserService = async (data: ICreateUser) => {
     await userRepository.save(newUser);
     const newUserEmail = await userEmailsRepository.save({
         email,
+        main: true,
         user: newUser
     });
 
@@ -102,4 +107,48 @@ export const updateUserService = async (
 
 export const deleteUserService = async (user: User) => {
     return await userRepository.remove(user);
+};
+
+export const newUserEmailService = async (
+    data: INewUserEmail,
+    user: User
+    ) => {
+
+    const newUserEmail = await userEmailsRepository.save({
+        ...data,
+        user: user
+    });
+
+    return returnNewUserEmailSchema.parse(newUserEmail);
+};
+
+export const deleteUserEmailService = async (
+    userEmail: UserEmails
+) => {
+
+    if(userEmail.main) throw new AppError(
+        "Cannot delete main email",
+        401
+    );
+
+    await userEmailsRepository.remove(userEmail);
+};
+
+export const newUserPhoneService = async (
+    data: INewUserPhone,
+    user: User
+    ) => {
+
+    const newUserPhone = await userPhonesRepository.save({
+        ...data,
+        user: user
+    });
+
+    return returnNewUserPhoneSchema.parse(newUserPhone);
+};
+
+export const deleteUserPhoneService = async (
+    userPhone: UserPhones
+) => {
+    await userPhonesRepository.remove(userPhone)
 };

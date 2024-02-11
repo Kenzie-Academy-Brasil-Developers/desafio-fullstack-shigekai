@@ -20,7 +20,7 @@ export class Contact {
     @UpdateDateColumn({type: "date"})
     updatedAt: string
 
-    @ManyToOne(()=> User, (user) => user.contacts)
+    @ManyToOne(()=> User, (user) => user.contacts, {onDelete: "CASCADE"})
     @JoinColumn()
     user: User
 
