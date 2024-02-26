@@ -10,7 +10,7 @@ export const validToken = (
 ) => {
     const {authorization} = req.headers;
 
-    if(!authorization) throw new AppError("Missing bearer token");
+    if(!authorization) throw new AppError("Missing bearer token", 401);
 
     const token: string = authorization.split(" ")[1];
     

@@ -9,9 +9,12 @@ export const newUserEmailSchema = userSchema.pick({
 export const returnNewUserEmailSchema = z.object({
     id: z.string().uuid(),
     email: z.string().email().max(120),
+    main: z.boolean(),
+    updatedAt: z.string(),
     user: z.object({
         id: z.string().uuid(),
         name: z.string().max(120),
-        admin: z.boolean()
+        admin: z.boolean(),
+        createdAt: z.string()
     })
 })

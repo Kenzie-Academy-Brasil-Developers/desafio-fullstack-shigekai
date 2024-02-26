@@ -38,8 +38,8 @@ userRouter.get(
 userRouter.get(
     "/:userId",
     validToken,
-    adminOrOwner,
     validId("userId", userRepository),
+    adminOrOwner,
     retrieveUserController
 )
 
@@ -55,8 +55,8 @@ userRouter.patch(
 userRouter.delete(
     "/:userId",
     validToken,
-    adminOrOwner,
     validId("userId", userRepository),
+    adminOrOwner,
     deleteUserController
 );
 

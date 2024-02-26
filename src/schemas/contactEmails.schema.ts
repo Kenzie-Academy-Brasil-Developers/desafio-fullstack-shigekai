@@ -8,6 +8,7 @@ export const newContactEmailSchema = contactSchema.pick({
 export const returnNewContactEmailSchema = z.object({
     id: z.string().uuid(),
     email: z.string().email().max(120),
+    updatedAt: z.string(),
     contact: z.object({
         id: z.string().uuid(),
         name: z.string().max(120)

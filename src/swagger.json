@@ -1,0 +1,2011 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Kenzie fullstack challenge API, by Lucas Gabriel",
+        "description": "user and contacts CRUD",
+        "version": "1.0.0"
+    },
+    "servers": [{
+        "url": "http://localhost:3000",
+        "description": "Local url"
+    }],
+    "paths": {
+        "/users": {
+            "post": {
+                "description": "Register user, user phone and email bust unique, the email registered will have the 'main' attribute set to true.",
+                "tags": ["Users"],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/createUser"
+                            },
+                            "examples": {
+                                "Valid Request Body": {
+                                    "summary": "200 OK",
+                                    "value":{
+                                        "name": "Doc Example",
+                                        "email": "doc-example@mail.com",
+                                        "password": "password123",
+                                        "phone": "42-99429942",
+                                        "admin": true
+                                    }
+                                },
+                                "Invalid Types": {
+                                    "summary": "400 Bad Request: Invalid Types",
+                                    "value": {
+                                        "name": 53577,
+                                        "email": "invalidmail",
+                                        "password": false,
+                                        "phone": 99999999,
+                                        "admin": "true"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/createUserResponse"
+                                },
+                                "examples": {
+                                    "Valid Request Body": {
+                                        "summary": "200 OK",
+                                        "value": {
+                                            "id": "d2bb9031-427c-4abd-b2a2-d4bc6f01ba93",
+                                            "name": "Doc Example",
+                                            "email": "doc-example@mail.com",
+                                            "phone": "42-99429942",
+                                            "admin": true,
+                                            "createdAt": "2024-02-24"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid Types": {
+                                        "summary": "400 Bad Request: Invalid Types",
+                                        "value": {
+                                            "name": [
+                                                "Expected string, received number"
+                                            ],
+                                            "email": [
+                                                "Invalid email"
+                                            ],
+                                            "password": [
+                                                "Expected string, received boolean"
+                                            ],
+                                            "phone": [
+                                                "Expected string, received number"
+                                            ],
+                                            "admin": [
+                                                "Expected boolean, received string"
+                                            ]
+                                        }
+                                    },
+                                    "Email Already Taken": {
+                                        "summary": "400 Bad Request: Email Already Taken",
+                                        "value": {
+                                            "details": "email must be unique"
+                                        }
+                                    },
+                                    "Phone Already Taken": {
+                                        "summary": "400 Bad Request: Phone Already Taken",
+                                        "value": {
+                                            "details": "phone must be unique"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [{}]
+            },
+            "get": {
+                "description": "List all users basic infos, must be admin",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/listUsers"
+                                },
+                                "example": [
+                                    {
+                                        "id": "83e81689-2d27-4478-aca7-67b6e0c959f3",
+                                        "name": "Luskas",
+                                        "admin": false,
+                                        "createdAt": "2024-02-17"
+                                    },
+                                    {
+                                        "id": "00666b80-1e3e-4c83-bef2-9981a6cc0cfc",
+                                        "name": "Ana Maria",
+                                        "admin": false,
+                                        "createdAt": "2024-02-17"
+                                    },
+                                    {
+                                        "id": "39a86175-a864-47f5-b1a8-226f139de02e",
+                                        "name": "Clara",
+                                        "admin": false,
+                                        "createdAt": "2024-02-17"
+                                    },
+                                    {
+                                        "id": "8a1056f3-fb04-4314-9a08-43102d6d69c4",
+                                        "name": "Lucas Gabrielll",
+                                        "admin": true,
+                                        "createdAt": "2024-02-10"
+                                    },
+                                    {
+                                        "id": "0a830ec9-89dc-471f-9ecf-d73590f0f632",
+                                        "name": "doc",
+                                        "admin": true,
+                                        "createdAt": "2024-02-23"
+                                    }
+                                ]                 
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Authorization": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "description": "User login, return a session JWT token",
+                "tags": ["Users"],
+                "security": [{}],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/loginUser"
+                            },
+                            "example": {
+                                    "email": "doc-example@mail.com",
+                                    "password": "password123"
+                            }
+
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/loginUserResponse"
+                                },
+                                "example": {                           
+                                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvYy1leGFtcGxlQG1haWwuY29tIiwiYWRtaW4iOnRydWUsImlhdCI6MTcwODgwODk5NCwiZXhwIjoxNzA4ODk1Mzk0LCJzdWIiOiJkMmJiOTAzMS00MjdjLTRhYmQtYjJhMi1kNGJjNmYwMWJhOTMifQ.JCrJ9SiQ-2vGvGSGudMAYqyjZJ6xVNygCEzRLkagCCg",
+                                        "user": {
+                                            "id": "d2bb9031-427c-4abd-b2a2-d4bc6f01ba93",
+                                            "name": "Doc Example",
+                                            "admin": true,
+                                            "createdAt": "2024-02-24"
+                                        }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid Types": {
+                                        "summary": "400 Bad Request: Invalid Types",
+                                        "value": {
+                                            "email": [
+                                                "Expected string, received number"
+                                            ],
+                                            "password": [
+                                                "Expected string, received boolean"
+                                            ]
+                                        }
+                                    },
+                                    "Invalid Credentials": {
+                                        "summary": "400 Bad Request: Invalid Credentials",
+                                        "value": {
+                                            "details": "Invalid email or password"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        },
+        "/users/{userId}": {
+            "get": {   
+                "description": "Get user full information, must be admin or account owner",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/fullUser"
+                                },
+                                "example": {
+                                    "id": "d2bb9031-427c-4abd-b2a2-d4bc6f01ba93",
+                                    "name": "Doc Example",
+                                    "admin": true,
+                                    "createdAt": "2024-02-24",
+                                    "userEmails": [
+                                        {
+                                            "id": "c196216c-bd32-4e0c-8c3c-a2b0ef53ee85",
+                                            "email": "doc-example@mail.com",
+                                            "main": true,
+                                            "updatedAt": "2024-02-24"
+                                        },
+                                        {
+                                            "id": "1c12dada-665c-416f-b136-1576048417ec",
+                                            "email": "doc-example-2@mail.com",
+                                            "main": false,
+                                            "updatedAt": "2024-02-24"
+                                        }
+                                    ],
+                                    "userPhones": [
+                                        {
+                                            "id": "12fc1f93-c2a4-4bb2-b6df-a2bdd34c448e",
+                                            "phone": "42-99429942",
+                                            "updatedAt": "2024-02-24"
+                                        },
+                                        {
+                                            "id": "62c7bd4a-c5d5-490c-a2a4-8c5f5f1dd5e9",
+                                            "phone": "4298429842",
+                                            "updatedAt": "2024-02-24"
+                                        }
+                                    ]
+                                }                          
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "User not found": {
+                                        "description": "Id format is valid, but user does not exist",
+                                        "value": {
+                                            "details": "user not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "patch": {
+                "description": "Change user name and password, must be logged, admin or account owner",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/updateUser"
+                            },
+                            "example": {
+                                "name": "Change Doc Test Name"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/basicUser"
+                                },
+                                "example": {
+                                    "id": "902e1c0d-da8e-4bb3-ade8-c4c00d832212",
+                                    "name": "Change Doc Test Name",
+                                    "admin": false,
+                                    "createdAt": "2024-02-24"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "User not found": {
+                                        "description": "Id format is valid, but user does not exist",
+                                        "value": {
+                                            "details": "user not found"
+                                        }
+                                    },
+                                    "Invalid body":{
+                                        "description": "Name or password received other type than string",
+                                        "value": {
+                                            "name": [
+                                                "Expected string, received number"
+                                            ],
+                                            "password": [
+                                                "Expected string, received boolean"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            },
+            "delete": {
+                "description": "Delete user by id, must be logged, account owner or admin",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "User not found": {
+                                        "description": "Id format is valid, but user does not exist",
+                                        "value": {
+                                            "details": "user not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        },
+        "/users/{userId}/email": {
+            "post": {
+                "description": "Register new user email, must be logged, account owner or admin, and email must be unique",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/newUserEmail"
+                            },
+                            "example": {
+                                "email": "docteste2@mail.com"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "User not found": {
+                                        "description": "Id format is valid, but user does not exist",
+                                        "value": {
+                                            "details": "user not found"
+                                        }
+                                    },
+                                    "Invalid body":{
+                                        "description": "Name or password received other type than string",
+                                        "value": {
+                                                "email": [
+                                                    "Expected string, received number"
+                                                ]                                  
+                                        }
+                                    },
+                                    "Email Already Taken": {
+                                        "description": "400 Bad Request: Email Already Taken",
+                                        "value": {
+                                            "details": "email must be unique"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}/phone": {
+            "post": {
+                "description": "Register User Phone, must be logged, account owner or admin, and user phone must be unique",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/newUserPhone"
+                            },
+                            "example": {
+                                "phone": "12245-3890"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/newUserPhoneReturn"
+                                },
+                                "example": {
+                                    "id": "01b640a2-5c9b-43c2-94a5-d877f3b7ffb7",
+                                    "phone": "12245-3890",
+                                    "updatedAt": "2024-02-24",
+                                    "user": {
+                                        "id": "0a830ec9-89dc-471f-9ecf-d73590f0f632",
+                                        "name": "Doc Testing",
+                                        "admin": true,
+                                        "createdAt": "2024-02-23"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "User not found": {
+                                        "description": "Id format is valid, but user does not exist",
+                                        "value": {
+                                            "details": "user not found"
+                                        }
+                                    },
+                                    "Invalid body":{
+                                        "description": "Phone received other type than string",
+                                        "value": {
+                                            "phone": [
+                                                "Expected string, received number"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userEmailId}/email": {
+            "delete": {
+                "description": "Delete user email by email id, must be logged, main email cannot be deleted",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    },
+                                    "Cannot delete main email": {
+                                        "value": {
+                                            "details": "Cannot delete main email"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Email not found": {
+                                        "description": "Id format is valid, but email does not exist",
+                                        "value": {
+                                            "details": "user not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+
+            }
+        },
+        "/users/{userPhoneId}/phone": {
+            "delete": {
+                "description": "Delete user phone by phone id, must be logged",
+                "tags": ["Users"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Email not found": {
+                                        "description": "Id format is valid, but email does not exist",
+                                        "value": {
+                                            "details": "user not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+
+            }
+        },
+        "/contacts": {
+            "post": {
+                "description": "Register contact for a user, must be logged",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/createContact"
+                            },
+                            "example": {
+                                "name": "Doc Testing Friend",
+                                "email": "docfriend@mail.com",
+                                "phone": "43-214687190",
+                                "description": "friendly person"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/createContactResponse"
+                                },
+                                "example": {
+                                    "id": "131a8b97-82ab-49ef-a6ae-d24a22a4d7a7",
+                                    "name": "Doc Testing Friend",
+                                    "email": "docfriend@mail.com",
+                                    "phone": "43-214687190",
+                                    "description": "friendly person",
+                                    "createdAt": "2024-02-25",
+                                    "updatedAt": "2024-02-25"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be account owner or admin"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid body":{
+                                        "description": "Name, email, phone and description received other type than string",
+                                        "value": {
+                                            "name": [
+                                                "Expected string, received boolean"
+                                            ],
+                                            "email": [
+                                                "Expected string, received number"
+                                            ],
+                                            "phone": [
+                                                "Expected string, received number"
+                                            ],
+                                            "description": [
+                                                "Expected string, received boolean"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contacts/user": {
+            "get": {
+                "description": "Read all contacts for a user, must be logged",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/userContacts"
+                                },
+                                "example": {
+                                    "id": "902e1c0d-da8e-4bb3-ade8-c4c00d832212",
+                                    "name": "Change Doc Test Name",
+                                    "admin": false,
+                                    "createdAt": "2024-02-24",
+                                    "contacts": [
+                                        {
+                                            "id": "131a8b97-82ab-49ef-a6ae-d24a22a4d7a7",
+                                            "name": "Doc Testing Friend"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contacts/{contactId}": {
+            "get": {
+                "description": "Retrieve one contact full information, by contact id",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/fullContact"
+                                },
+                                "example": {
+                                    "id": "abde3496-a7b7-4f96-98be-0b8148f70b1c",
+                                    "name": "Doc Testing Friend",
+                                    "description": "Friendly contact",
+                                    "createdAt": "2024-02-08",
+                                    "updatedAt": "2024-02-09",
+                                    "contactEmails": [
+                                        {
+                                            "id": "ffb9ed43-091f-4b92-926d-672cccd95367",
+                                            "email": "new@mail.com",
+                                            "updatedAt": "2024-02-09"
+                                        },
+                                        {
+                                            "id": "8e83e5fe-3ff9-40a4-b168-9874431accfb",
+                                            "email": "friendly@mail.com",
+                                            "updatedAt": "2024-02-09"
+                                        }
+                                    ],
+                                    "contactPhones": [
+                                        {
+                                            "id": "0d211c8f-c2c7-4220-bbfb-272785e29790",
+                                            "phone": "42-424242",
+                                            "updatedAt": "2024-02-08"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be admin or contact related"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Contact not found": {
+                                        "description": "Id format is valid, but contact does not exist",
+                                        "value": {
+                                            "details": "contact not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Allow change contact name and description, will update requested fields only",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "required": false,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/updateContact"
+                            },
+                            "example": {
+                                "name": "New Name",
+                                "description": "Praise the sun !"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/updateContactResponse"
+                                },
+                                "example": {
+                                    "id": "131a8b97-82ab-49ef-a6ae-d24a22a4d7a7",
+                                    "name": "New Name",
+                                    "description": "Praise the sun !",
+                                    "createdAt": "2024-02-25",
+                                    "updatedAt": "2024-02-25"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be admin or contact related"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Contact not found": {
+                                        "description": "Id format is valid, but contact does not exist",
+                                        "value": {
+                                            "details": "contact not found"
+                                        }
+                                    },
+                                    "Invalid body":{
+                                        "description": "Name or password received other type than string",
+                                        "value": {
+                                            "name": [
+                                                "Expected string, received boolean"
+                                            ],
+                                            "description": [
+                                                "Expected string, received boolean"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove contact by contact id",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Contact not found": {
+                                        "description": "Id format is valid, but contact does not exist",
+                                        "value": {
+                                            "details": "contact not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contacts/{contactId}/email": {
+            "post": {
+                "description": "Create new contact email, must be logged, admin or contact related",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/newContactEmail"
+                            },
+                            "example": {
+                                "email": "solaire@mail.com"
+                            }
+                    }
+                }
+            },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/newContactEmailReturn"
+                                },
+                                "example": {
+                                    "id": "8d7d468d-2682-432f-a371-41141f3c1ab4",
+                                    "email": "solaire@mail.com",
+                                    "updatedAt": "2024-02-25",
+                                    "contact": {
+                                        "id": "131a8b97-82ab-49ef-a6ae-d24a22a4d7a7",
+                                        "name": "New Name"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be admin or contact related"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Contact not found": {
+                                        "description": "Id format is valid, but contact does not exist",
+                                        "value": {
+                                            "details": "contact not found"
+                                        }
+                                    },
+                                    "Invalid body":{
+                                        "description": "Email received other type than string",
+                                        "value": {
+                                            "email": [
+                                                "Expected string, received boolean"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        },
+        "/contacts/{contactEmailId}/email": {
+            "delete": {
+                "description": "Remove contat email by contact email id, must be logged",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Contact email not found": {
+                                        "description": "Id format is valid, but contact email does not exist",
+                                        "value": {
+                                            "details": "contact email not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contacts/{contactId}/phone": {
+            "post": {
+                "description": "Create new contact phone, must be logged, admin or contact related",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "description": "Requests",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/newContactPhone"
+                            },
+                            "example": {
+                                "phone": "42-424242"
+                            }
+                    }
+                }
+            },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/newContactPhoneReturn"
+                                },
+                                "example": {
+                                    "id": "52b92314-82a8-4886-8685-e1dcd2d192d4",
+                                    "phone": "42-909090",
+                                    "updatedAt": "2024-02-25",
+                                    "contact": {
+                                        "id": "131a8b97-82ab-49ef-a6ae-d24a22a4d7a7",
+                                        "name": "New Name"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Insufficient API Authorization": {
+                                        "value": {
+                                            "details": "Insufficient Permissions, must be admin or contact related"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Contact not found": {
+                                        "description": "Id format is valid, but contact does not exist",
+                                        "value": {
+                                            "details": "contact not found"
+                                        }
+                                    },
+                                    "Invalid body":{
+                                        "description": "Phone received other type than string",
+                                        "value": {
+                                            "phone": [
+                                                "Expected string, received boolean"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        },
+        "/contacts/{contactPhoneId/phone}": {
+            "delete": {
+                "description": "Remove contact phone by contact phone id, must be logged",
+                "tags": ["Contacts"],
+                "security": [{"bearerAuth": []}],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Invalid JWT": {
+                                        "description": "Token does not match JWT specification",
+                                        "value":{
+                                            "details": "jwt malformed"
+                                        }
+                                    },
+                                    "Insufficient JWT Permission": {
+                                        "value":{
+                                            "details": "Insufficient permissions"
+                                        }
+                                    },
+                                    "Missing Authorization Token": {
+                                        "value": {
+                                            "details": "Missing bearer token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Id Malformed": {
+                                        "description": "Id does not match UUID specification",
+                                        "value": {
+                                            "details": "Id malformed"
+                                        }
+                                    },
+                                    "Contact phone not found": {
+                                        "description": "Id format is valid, but contact phone does not exist",
+                                        "value": {
+                                            "details": "contact phone not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "createUser": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "description": "User name, max length: 120"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User email, must be unique, email type and max length: 120"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User password, max length: 256"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "User phone, unique, max length: 16"
+                    },
+                    "admin": {
+                        "type": "boolean",
+                        "description": "Admin status, boolean, not required, but default value is false"
+                    }
+                },
+                "required": ["name", "email", "password", "phone"]
+            },
+            "createUserResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "admin": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "basicUser": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "admin": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "loginUser": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": ["email", "password"]
+            },
+            "updateUser": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "loginUserResponse": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/basicUser"
+                    }
+                }
+            },
+            "listUsers": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/basicUser"
+                }
+            },
+            "userEmail": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "main": {
+                        "type": "boolean"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "userPhone": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "fullUser": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/basicUser"},
+                    {
+                        "type": "object",
+                        "properties": {
+                            "userEmails": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/userEmail"
+                                }
+                            },
+                            "userPhones": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/userPhone"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "newUserEmail": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            },
+            "newUserEmailResponse": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/userEmail"},
+                    {
+                        "type": "object",
+                        "properties": {
+                            "user": {
+                                "$ref": "#/components/schemas/basicUser"
+                            }
+                        }
+                    }
+                ]
+            },
+            "newUserPhone": {
+                "type": "object",
+                "properties": {
+                    "phone": {
+                        "type": "string"
+                    }
+                }
+            },
+            "newUserPhoneReturn": {
+                "allOf": [
+                    {"$ref": "#components/schemas/userPhone"},
+                    {
+                        "type": "object",
+                        "properties": {
+                            "user": {
+                                "$ref": "#/components/schemas/basicUser"
+                            }
+                        }
+                    }
+                ]
+
+            },
+            "createContact": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "createContactResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "contactEmail": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "contactPhone": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "miniContact": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "basicContact": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "createAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "fullContact": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    },
+                    "contactEmails": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/contactEmail"
+                        }
+                    },
+                    "contactPhones": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/contactPhone"
+                        }
+                    }
+                }
+            },
+            "userContacts": {
+                "type": "object",
+                "allOf": [
+                    {"$ref": "#/components/schemas/basicUser"},
+                    {
+                        "type": "object",
+                        "properties": {
+                            "contacts": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/miniContact"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "updateContact": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "updateContactResponse": {
+                "allOf": [{"$ref": "#/components/schemas/basicContact"}]
+            },
+            "newContactEmail": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            },
+            "newContactEmailReturn": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/miniContact"
+                    }
+                }
+            },
+            "newContactPhone": {
+                "type": "object",
+                "properties": {
+                    "phone": {
+                        "type": "string"
+                    }
+                }
+            },
+            "newContactPhoneReturn": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/miniContact"
+                    }
+                }
+            }
+    },
+    "securitySchemes": {
+        "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+        }
+    }
+    
+    }
+}

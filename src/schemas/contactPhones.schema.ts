@@ -8,6 +8,7 @@ export const newContactPhoneSchema = contactSchema.pick({
 export const returnNewContactPhoneSchema = z.object({
     id: z.string().uuid(),
     phone: z.string().max(16),
+    updatedAt: z.string(),
     contact: z.object({
         id: z.string().uuid(),
         name: z.string().max(120)

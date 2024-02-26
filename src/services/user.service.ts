@@ -61,8 +61,10 @@ export const loginUserService = async (data: ILoginUser) => {
         String(process.env.SECRET_KEY),
         {expiresIn: "24h", subject: String(user.id)}
     );
+    
+    const userReturn = safeReturnUpdateUserSchema.parse(user);
 
-    return {token};
+    return {token, user: userReturn};
 };
 
 export const readAllUsersService = async (): Promise<IReadAllUsers> => {

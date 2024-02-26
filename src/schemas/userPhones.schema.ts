@@ -9,9 +9,11 @@ export const newUserPhoneSchema = userSchema.pick({
 export const returnNewUserPhoneSchema = z.object({
     id: z.string().uuid(),
     phone: z.string().max(16),
+    updatedAt: z.string(),
     user: z.object({
         id: z.string().uuid(),
         name: z.string().max(120),
-        admin: z.boolean()
+        admin: z.boolean(),
+        createdAt: z.string()
     })
 });
