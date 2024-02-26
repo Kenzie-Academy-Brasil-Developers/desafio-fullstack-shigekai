@@ -50,8 +50,7 @@ Diagrama Entidade Relacionamento da API definindo relacionamentos entre Users, U
 Clone o projeto em sua máquina e instale as dependências com o comando:
 
 ```
-npm
-install
+npm install
 ```
 
 ### 3.2. Variáveis de Ambiente
