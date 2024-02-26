@@ -49,7 +49,8 @@ Diagrama Entidade Relacionamento da API definindo relacionamentos entre Users, U
 
 Clone o projeto em sua máquina e instale as dependências com o comando:
 
-```npm
+```
+npm
 install
 ```
 
