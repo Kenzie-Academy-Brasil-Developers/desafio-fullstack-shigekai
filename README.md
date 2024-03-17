@@ -51,6 +51,7 @@ Clone o projeto em sua máquina e instale as dependências com o comando:
 
 ```
 npm install
+
 ```
 
 ### 3.2. Variáveis de Ambiente
