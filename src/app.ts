@@ -16,6 +16,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/", router);
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173"
+}));
 
 app.use(handleError);
