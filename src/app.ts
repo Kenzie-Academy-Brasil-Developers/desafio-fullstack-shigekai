@@ -8,11 +8,14 @@ import swaggerDocs from "./swagger.json";
 
 export const app: Application = express();
 
+const cors = require("cors");
 
 app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/", router);
+
+app.use(cors());
 
 app.use(handleError);
