@@ -12,10 +12,6 @@ const cors = require("cors");
 
 app.use(express.json());
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-app.use("/", router);
-
 const corsOpts = {
     origin: '*',
   
@@ -33,5 +29,10 @@ const corsOpts = {
   };
   
   app.use(cors(corsOpts));
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.use("/", router);
+
 
 app.use(handleError);
