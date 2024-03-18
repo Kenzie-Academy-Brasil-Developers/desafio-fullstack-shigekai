@@ -12,7 +12,7 @@
     "paths": {
         "/users": {
             "post": {
-                "description": "Register user, user phone and email bust unique, the email registered will have the 'main' attribute set to true.",
+                "description": "Register user, user phone and email must be unique, the email registered will have the 'main' attribute set to true.",
                 "tags": ["Users"],
                 "requestBody": {
                     "required": true,
