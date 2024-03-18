@@ -259,6 +259,17 @@
         "/users/{userId}": {
             "get": {   
                 "description": "Get user full information, must be admin or account owner",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Users"],
                 "security": [{"bearerAuth": []}],
                 "responses": {
@@ -522,6 +533,17 @@
         "/users/{userId}/email": {
             "post": {
                 "description": "Register new user email, must be logged, account owner or admin, and email must be unique",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Users"],
                 "security": [{"bearerAuth": []}],
                 "requestBody": {
@@ -610,6 +632,17 @@
         "/users/{userId}/phone": {
             "post": {
                 "description": "Register User Phone, must be logged, account owner or admin, and user phone must be unique",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Users"],
                 "security": [{"bearerAuth": []}],
                 "requestBody": {
@@ -713,6 +746,17 @@
         "/users/{userEmailId}/email": {
             "delete": {
                 "description": "Delete user email by email id, must be logged, main email cannot be deleted",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "emailId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Users"],
                 "security": [{"bearerAuth": []}],
                 "responses": {
@@ -782,6 +826,17 @@
         "/users/{userPhoneId}/phone": {
             "delete": {
                 "description": "Delete user phone by phone id, must be logged",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "userPhoneId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Users"],
                 "security": [{"bearerAuth": []}],
                 "responses": {
@@ -1003,6 +1058,17 @@
         "/contacts/{contactId}": {
             "get": {
                 "description": "Retrieve one contact full information, by contact id",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contactId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Contacts"],
                 "security": [{"bearerAuth": []}],
                 "responses": {
@@ -1098,6 +1164,17 @@
             },
             "patch": {
                 "description": "Allow change contact name and description, will update requested fields only",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contactId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Contacts"],
                 "security": [{"bearerAuth": []}],
                 "requestBody": {
@@ -1199,6 +1276,17 @@
             },
             "delete": {
                 "description": "Remove contact by contact id",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contactId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Contacts"],
                 "security": [{"bearerAuth": []}],
                 "responses": {
@@ -1257,6 +1345,17 @@
         "/contacts/{contactId}/email": {
             "post": {
                 "description": "Create new contact email, must be logged, admin or contact related",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contactId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Contacts"],
                 "security": [{"bearerAuth": []}],
                 "requestBody": {
@@ -1359,6 +1458,17 @@
         "/contacts/{contactEmailId}/email": {
             "delete": {
                 "description": "Remove contat email by contact email id, must be logged",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contactEmailId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Contacts"],
                 "security": [{"bearerAuth": []}],
                 "responses": {
@@ -1417,6 +1527,17 @@
         "/contacts/{contactId}/phone": {
             "post": {
                 "description": "Create new contact phone, must be logged, admin or contact related",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contactId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Contacts"],
                 "security": [{"bearerAuth": []}],
                 "requestBody": {
@@ -1519,6 +1640,17 @@
         "/contacts/{contactPhoneId/phone}": {
             "delete": {
                 "description": "Remove contact phone by contact phone id, must be logged",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contactPhoneId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "UUID"
+                        }
+                    }
+                ],
                 "tags": ["Contacts"],
                 "security": [{"bearerAuth": []}],
                 "responses": {
