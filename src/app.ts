@@ -17,7 +17,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/", router);
 
 app.use(cors({
-    origin: "http://localhost:5173"
+    origin: "https://desafio-fullstack-shigekai-frontend.vercel.app/"
 }));
 
 app.use(handleError);
