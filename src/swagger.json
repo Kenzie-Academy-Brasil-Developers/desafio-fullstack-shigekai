@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "Kenzie fullstack challenge API, by Lucas Gabriel",
+        "title": "User Agenda API, by Lucas Gabriel",
         "description": "user and contacts CRUD",
         "version": "1.0.0"
     },
